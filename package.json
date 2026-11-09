@@ -1,0 +1,16 @@
+{
+  "name": "dsh-lan-session-header",
+  "version": "0.1.0",
+  "description": "Per-session x-opencode-session headers for one custom DeepSeek Harness model route",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "files": ["index.js", "cordis.patch.yml", "README.md"],
+  "scripts": {
+    "test": "node --test"
+  },
+  "dsh": {
+    "engines": { "dsh": ">=0.2.2-alpha.3" },
+    "bundle": { "patch": "./cordis.patch.yml" }
+  }
+}

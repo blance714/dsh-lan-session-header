@@ -1,0 +1,4 @@
+- insert:
+    - id: lan-session-header
+      name: dsh-lan-session-header
+      config: {}
