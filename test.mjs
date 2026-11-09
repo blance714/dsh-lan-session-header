@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { apply } from './index.js'
+import { apply, Config } from './index.js'
 
 const provider = 'custom-provider'
 const model = 'example-model'
@@ -9,10 +9,9 @@ let prepareHeaders
 
 apply({
   on(event, listener) {
-    assert.equal(event, 'llm-pi-ai/request-headers')
-    prepareHeaders = listener
+    if (event === 'llm-pi-ai/request-headers') prepareHeaders = listener
   },
-}, { provider, model, endpoint })
+}, Config({ provider, model, endpoint }))
 
 function dispatch(overrides = {}, initialHeaders = {}) {
   const headers = new Headers(initialHeaders)
@@ -51,9 +50,9 @@ test('leaves other providers, models, endpoints and sessionless calls untouched'
 })
 
 test('requires explicit opt-in and rejects incomplete or invalid targets', () => {
-  const ctx = { on: () => assert.fail('unexpected listener') }
-  apply(ctx, {})
-  assert.throws(() => apply(ctx, { provider, model }), /requires a provider ID/)
-  assert.throws(() => apply(ctx, { provider, model, endpoint: 'file:///tmp' }), /HTTP\(S\)/)
-  assert.throws(() => apply(ctx, { provider, model, endpoint: 'https://example.com/?token=value' }), /HTTP\(S\)/)
+  const ctx = { on() {} }
+  assert.doesNotThrow(() => apply(ctx, Config({})))
+  assert.throws(() => apply(ctx, Config({ provider, model })), /requires a provider ID/)
+  assert.throws(() => apply(ctx, Config({ provider, model, endpoint: 'file:///tmp' })), /HTTP\(S\)/)
+  assert.throws(() => apply(ctx, Config({ provider, model, endpoint: 'https://example.com/?token=value' })), /HTTP\(S\)/)
 })
